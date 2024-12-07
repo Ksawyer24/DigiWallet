@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DigiWallet.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace DigiWallet.Data
 {
@@ -7,6 +9,24 @@ namespace DigiWallet.Data
         public DigitalDbContext(DbContextOptions<DigitalDbContext> options) :base(options)
         {
             
+        }
+
+
+        
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+       
+   
+
+
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+
+            base.OnModelCreating(modelBuilder);
+
         }
     }
 }
