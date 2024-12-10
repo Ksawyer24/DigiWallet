@@ -66,7 +66,7 @@ namespace DigiWallet.Repos
                 Name = "Default Wallet",        // Default wallet name
                 Balance = 0,                    // Default balance
                 Currency = "GHC",               // Default currency
-                Transactions = new List<Transaction>() // Initialize the transactions collection
+                Transactions = new List<Transaction>() // Initialize the  collection of transactions
             };
 
             // 3. Add the wallet to the database
