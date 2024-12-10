@@ -17,41 +17,66 @@ namespace DigiWallet.Repos
 
         public async Task AddFundsAsync(Guid userId, decimal amount)
         {
-            // Begin a transaction
+            
             using var transaction = await digitalDbContext.Database.BeginTransactionAsync();
 
             try
             {
-                // Retrieve the wallet
+               
                 var wallet = await digitalDbContext.Wallets
                  .FirstOrDefaultAsync(w => w.UserId == userId);
 
                 if (wallet == null)
                 {
-                    throw new Exception("Wallet not found for the given user.");
+                    throw new Exception("Wallet not found for this user.");
                 }
 
-                // Update the wallet balance
+                
                 wallet.Balance += amount;
 
-                // Save changes to the wallet
+                
                 await digitalDbContext.SaveChangesAsync();
 
-                // Commit the transaction
+                
                 await transaction.CommitAsync();
             }
 
             catch (Exception)
             {
-                // Rollback transaction in case of failure
+              
                 await transaction.RollbackAsync();
                 throw;
             }
         }
 
-        public Task<Wallet> CreateWalletForUserAsync(Guid userId)
+        public async Task<Wallet> CreateWalletForUserAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            // 1. Check if the user already has a wallet
+            var existingWallet = await digitalDbContext.Wallets
+                                                     .FirstOrDefaultAsync(w => w.UserId == userId);
+            if (existingWallet != null)
+            {
+                throw new Exception("User already has a wallet.");
+            }
+
+            // 2. Create a new wallet instance
+            var wallet = new Wallet
+            {
+                UserId = userId,                // Assign the UserId to this wallet
+                Name = "Default Wallet",        // Default wallet name
+                Balance = 0,                    // Default balance
+                Currency = "GHC",               // Default currency
+                Transactions = new List<Transaction>() // Initialize the transactions collection
+            };
+
+            // 3. Add the wallet to the database
+            await digitalDbContext.Wallets.AddAsync(wallet);
+
+            // 4. Save the changes to the database
+            await digitalDbContext.SaveChangesAsync();
+
+            // 5. Return the created wallet
+            return wallet;
         }
 
         public Task DeductFundsAsync(Guid walletId, decimal amount)
