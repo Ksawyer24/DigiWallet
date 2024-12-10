@@ -1,4 +1,5 @@
 using DigiWallet.Data;
+using DigiWallet.Mappings;
 using DigiWallet.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +24,7 @@ builder.Services.Configure<PaystackConfig>(
     builder.Configuration.GetSection("Paystack"));
 
 
-//builder.Services.AddAutoMapper(typeof(MapperProfiles));
+builder.Services.AddAutoMapper(typeof(Maps));
 
 
 var app = builder.Build();

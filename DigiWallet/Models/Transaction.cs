@@ -11,6 +11,8 @@ namespace DigiWallet.Models
         public string Description { get; set; } = string.Empty;
         public DateTime DateOfTransaction { get; set; }
 
+        public Wallet Wallet { get; set; }
+
 
     }
 }
