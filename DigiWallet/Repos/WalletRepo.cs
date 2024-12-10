@@ -51,22 +51,19 @@ namespace DigiWallet.Repos
 
         public async Task<Wallet> CreateWalletForUserAsync(Guid userId)
         {
-            // 1. Check if the user already has a wallet
-            var existingWallet = await digitalDbContext.Wallets
-                                                     .FirstOrDefaultAsync(w => w.UserId == userId);
+            
+            var existingWallet = await digitalDbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+
             if (existingWallet != null)
             {
                 throw new Exception("User already has a wallet.");
             }
 
-            // 2. Create a new wallet instance
+           
             var wallet = new Wallet
             {
-                UserId = userId,                // Assign the UserId to this wallet
-                Name = "Default Wallet",        // Default wallet name
-                Balance = 0,                    // Default balance
-                Currency = "GHC",               // Default currency
-                Transactions = new List<Transaction>() // Initialize the  collection of transactions
+                UserId = userId,               
+                Transactions = new List<Transaction>() 
             };
 
             // 3. Add the wallet to the database
