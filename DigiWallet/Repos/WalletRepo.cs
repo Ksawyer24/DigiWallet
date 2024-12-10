@@ -103,32 +103,19 @@ namespace DigiWallet.Repos
 
         public async Task<List<Transaction>> GetTransactionsByWalletIdAsync(Guid walletId)
         {
-            // 1. Retrieve the wallet with the transactions
+            
             var wallet = await digitalDbContext.Wallets
-                                             .Include(w => w.Transactions)
-                                             .FirstOrDefaultAsync(w => w.Id == walletId);
+                 .Include(w => w.Transactions)
+                 .FirstOrDefaultAsync(w => w.Id == walletId);
 
-            // 2. Check if the wallet exists
+
             if (wallet == null)
             {
                 throw new Exception("Wallet not found.");
             }
 
-            // 3. Map the transactions to the DTOs
-            var transactionDtos = wallet.Transactions
-                 .Select(t => new Transaction
-                 {
-                     Id = t.Id,
-                     WalletId = t.WalletId,
-                     Amount = t.Amount,
-                     DateOfTransaction = t.DateOfTransaction,
-                     Description = t.Description
-                 })
-                                        .ToList();
-
-
-            // 4. Return the list of transaction DTOs
-            return transactionDtos;
+            
+            return wallet.Transactions.ToList();
         }
 
        
