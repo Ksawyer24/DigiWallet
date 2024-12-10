@@ -53,7 +53,7 @@ namespace DigiWallet.Repos
         {
             
             var existingWallet = await digitalDbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-
+             
             if (existingWallet != null)
             {
                 throw new Exception("User already has a wallet.");
@@ -66,24 +66,71 @@ namespace DigiWallet.Repos
                 Transactions = new List<Transaction>() 
             };
 
-            // 3. Add the wallet to the database
+           
             await digitalDbContext.Wallets.AddAsync(wallet);
 
-            // 4. Save the changes to the database
+           
             await digitalDbContext.SaveChangesAsync();
 
-            // 5. Return the created wallet
+           
             return wallet;
         }
 
-        public Task DeductFundsAsync(Guid walletId, decimal amount)
+        public async Task DeductFundsAsync(Guid walletId, decimal amount)
         {
-            throw new NotImplementedException();
+           
+            var wallet = await digitalDbContext.Wallets.FirstOrDefaultAsync(w => w.Id == walletId);
+
+
+            
+            if (wallet == null)
+            {
+                throw new Exception("Wallet not found.");
+            }
+
+            
+            if (wallet.Balance < amount)
+            {
+                throw new Exception("Insufficient funds in the wallet.");
+            }
+
+            
+            wallet.Balance -= amount;
+
+          
+            await digitalDbContext.SaveChangesAsync();
         }
 
-        public Task<List<TransactionDto>> GetTransactionsByWalletIdAsync(Guid walletId)
+        public async Task<List<Transaction>> GetTransactionsByWalletIdAsync(Guid walletId)
         {
-            throw new NotImplementedException();
+            // 1. Retrieve the wallet with the transactions
+            var wallet = await digitalDbContext.Wallets
+                                             .Include(w => w.Transactions)
+                                             .FirstOrDefaultAsync(w => w.Id == walletId);
+
+            // 2. Check if the wallet exists
+            if (wallet == null)
+            {
+                throw new Exception("Wallet not found.");
+            }
+
+            // 3. Map the transactions to the DTOs
+            var transactionDtos = wallet.Transactions
+                 .Select(t => new Transaction
+                 {
+                     Id = t.Id,
+                     WalletId = t.WalletId,
+                     Amount = t.Amount,
+                     DateOfTransaction = t.DateOfTransaction,
+                     Description = t.Description
+                 })
+                                        .ToList();
+
+
+            // 4. Return the list of transaction DTOs
+            return transactionDtos;
         }
+
+       
     }
 }

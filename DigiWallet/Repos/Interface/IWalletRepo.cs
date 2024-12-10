@@ -8,6 +8,6 @@ namespace DigiWallet.Repos.Interface
         Task<Wallet> CreateWalletForUserAsync(Guid userId);
         Task AddFundsAsync(Guid userId, decimal amount);
         Task DeductFundsAsync(Guid walletId, decimal amount);
-        Task<List<TransactionDto>> GetTransactionsByWalletIdAsync(Guid walletId);
+        Task<List<Transaction>> GetTransactionsByWalletIdAsync(Guid walletId);
     }
 }
